@@ -1,0 +1,70 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}{{ title }} - 后台管理{% endblock %}
+
+{% block content_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<form class="layui-form" action="" method="POST">
+    {{ form.hidden_tag() }}
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色名称</label>
+        <div class="layui-input-block">
+            {{ form.name(class="layui-input", placeholder="请输入角色名称") }}
+            {% if form.name.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.name.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色描述</label>
+        <div class="layui-input-block">
+            {{ form.description(class="layui-textarea", placeholder="请输入角色描述", rows=5) }}
+            {% if form.description.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.description.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            {{ form.submit(class="layui-btn layui-btn-normal") }}
+            <a href="{{ url_for('admin.role_list') }}" class="layui-btn layui-btn-primary">取消</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    layui.use(['form', 'layer'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+        
+        // 初始化表单
+        form.render();
+        
+        // 表单验证
+        form.verify({
+            name: function(value) {
+                if (value.length < 2) {
+                    return '角色名称长度不能少于2个字符';
+                }
+                if (value.length > 20) {
+                    return '角色名称长度不能超过20个字符';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

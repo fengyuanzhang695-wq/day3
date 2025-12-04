@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}舆情分析系统{% endblock %}</title>
+    
+    <!-- 引入LayUI样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='layui/css/layui.css') }}">
+    
+    <!-- 页面自定义样式 -->
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <!-- 页面头部 -->
+    <header>
+        <div class="layui-container">
+            <h1>舆情分析系统</h1>
+        </div>
+    </header>
+    
+    <!-- 页面主体内容 -->
+    <main class="layui-container">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- 页面底部 -->
+    <footer>
+        <div class="layui-container">
+            <p>© 2025 舆情分析系统</p>
+        </div>
+    </footer>
+    
+    <!-- 引入LayUI脚本 -->
+    <script src="{{ url_for('static', filename='layui/layui.js') }}"></script>
+    
+    <!-- 页面自定义脚本 -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

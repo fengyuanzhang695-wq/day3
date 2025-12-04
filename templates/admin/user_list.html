@@ -1,0 +1,96 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}用户列表 - 后台管理{% endblock %}
+
+{% block content_title %}用户列表{% endblock %}
+
+{% block content %}
+<div class="layui-btn-container">
+    <a href="{{ url_for('admin.user_add') }}" class="layui-btn layui-btn-normal">
+        <i class="layui-icon layui-icon-plus"></i> 添加用户
+    </a>
+</div>
+
+<table class="layui-table" lay-filter="user-table">
+    <thead>
+        <tr>
+            <th lay-data="{field:'id', width:80, sort:true}">ID</th>
+            <th lay-data="{field:'username', width:150}">用户名</th>
+            <th lay-data="{field:'email', width:250}">邮箱</th>
+            <th lay-data="{field:'role', width:120}">角色</th>
+            <th lay-data="{field:'created_at', width:200, sort:true}">创建时间</th>
+            <th lay-data="{field:'actions', width:180, fixed:'right'}">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role.name }}</td>
+            <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>
+                <a href="{{ url_for('admin.user_edit', user_id=user.id) }}" class="layui-btn layui-btn-xs layui-btn-primary">
+                    <i class="layui-icon layui-icon-edit"></i> 编辑
+                </a>
+                <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteUser({{ user.id }})">
+                    <i class="layui-icon layui-icon-delete"></i> {% if user.id == current_user.id %}禁止{% else %}删除{% endif %}
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    layui.use(['table', 'layer', 'form'], function() {
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        
+        // 初始化表格
+        table.init('user-table', {
+            page: true,
+            limit: 10,
+            limits: [10, 20, 30, 50]
+        });
+        
+        // 删除用户函数
+        window.deleteUser = function(userId) {
+            if (userId == {{ current_user.id }}) {
+                layer.msg('不能删除当前登录用户', {icon: 2});
+                return;
+            }
+            
+            layer.confirm('确定要删除该用户吗？', {
+                title: '删除确认',
+                btn: ['确定', '取消'],
+                icon: 3
+            }, function(index) {
+                // 发送删除请求
+                $.ajax({
+                    url: '/admin/user/delete/' + userId,
+                    type: 'POST',
+                    data: {_csrf_token: $('meta[name="csrf-token"]').attr('content')},
+                    success: function(response) {
+                        layer.msg('用户删除成功', {icon: 1});
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function(xhr, status, error) {
+                        layer.msg('用户删除失败', {icon: 2});
+                    }
+                });
+                
+                layer.close(index);
+            }, function(index) {
+                layer.close(index);
+            });
+        };
+    });
+</script>
+{% endblock %}

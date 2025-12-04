@@ -1,0 +1,96 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}角色列表 - 后台管理{% endblock %}
+
+{% block content_title %}角色列表{% endblock %}
+
+{% block content %}
+<div class="layui-btn-container">
+    <a href="{{ url_for('admin.role_add') }}" class="layui-btn layui-btn-normal">
+        <i class="layui-icon layui-icon-plus"></i> 添加角色
+    </a>
+</div>
+
+<table class="layui-table" lay-filter="role-table">
+    <thead>
+        <tr>
+            <th lay-data="{field:'id', width:80, sort:true}">ID</th>
+            <th lay-data="{field:'name', width:150}">角色名称</th>
+            <th lay-data="{field:'description', minWidth:300}">角色描述</th>
+            <th lay-data="{field:'user_count', width:120}">用户数量</th>
+            <th lay-data="{field:'actions', width:180, fixed:'right'}">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for role in roles %}
+        <tr>
+            <td>{{ role.id }}</td>
+            <td>{{ role.name }}</td>
+            <td>{{ role.description or '无描述' }}</td>
+            <td>{{ role.users.count() }}</td>
+            <td>
+                <a href="{{ url_for('admin.role_edit', role_id=role.id) }}" class="layui-btn layui-btn-xs layui-btn-primary">
+                    <i class="layui-icon layui-icon-edit"></i> 编辑
+                </a>
+                <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteRole({{ role.id }})">
+                    <i class="layui-icon layui-icon-delete"></i> {% if role.users.count() > 0 %}禁止{% else %}删除{% endif %}
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    layui.use(['table', 'layer', 'form'], function() {
+        var table = layui.table;
+        var layer = layui.layer;
+        var form = layui.form;
+        
+        // 初始化表格
+        table.init('role-table', {
+            page: true,
+            limit: 10,
+            limits: [10, 20, 30, 50]
+        });
+        
+        // 删除角色函数
+        window.deleteRole = function(roleId) {
+            var userCount = $("tr[data-role-id='" + roleId + "']").find(".user-count").text();
+            
+            if (userCount > 0) {
+                layer.msg('该角色正在被用户使用，不能删除', {icon: 2});
+                return;
+            }
+            
+            layer.confirm('确定要删除该角色吗？', {
+                title: '删除确认',
+                btn: ['确定', '取消'],
+                icon: 3
+            }, function(index) {
+                // 发送删除请求
+                $.ajax({
+                    url: '/admin/role/delete/' + roleId,
+                    type: 'POST',
+                    data: {_csrf_token: $('meta[name="csrf-token"]').attr('content')},
+                    success: function(response) {
+                        layer.msg('角色删除成功', {icon: 1});
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function(xhr, status, error) {
+                        layer.msg('角色删除失败', {icon: 2});
+                    }
+                });
+                
+                layer.close(index);
+            }, function(index) {
+                layer.close(index);
+            });
+        };
+    });
+</script>
+{% endblock %}

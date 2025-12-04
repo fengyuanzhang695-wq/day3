@@ -1,0 +1,112 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}{{ title }} - 后台管理{% endblock %}
+
+{% block content_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<form class="layui-form" action="" method="POST">
+    {{ form.hidden_tag() }}
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-block">
+            {{ form.username(class="layui-input", placeholder="请输入用户名") }}
+            {% if form.username.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.username.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">邮箱</label>
+        <div class="layui-input-block">
+            {{ form.email(class="layui-input", placeholder="请输入邮箱") }}
+            {% if form.email.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.email.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            {{ form.password(class="layui-input", placeholder="{% if user %}保持空则不修改密码{% else %}请输入密码{% endif %}") }}
+            {% if form.password.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.password.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色</label>
+        <div class="layui-input-block">
+            {{ form.role_id(class="layui-select") }}
+            {% if form.role_id.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.role_id.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            {{ form.submit(class="layui-btn layui-btn-normal") }}
+            <a href="{{ url_for('admin.user_list') }}" class="layui-btn layui-btn-primary">取消</a>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    layui.use(['form', 'layer'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+        
+        // 初始化表单
+        form.render();
+        
+        // 表单验证
+        form.verify({
+            username: function(value) {
+                if (value.length < 2) {
+                    return '用户名长度不能少于2个字符';
+                }
+                if (value.length > 20) {
+                    return '用户名长度不能超过20个字符';
+                }
+            },
+            email: function(value) {
+                var emailReg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                if (!emailReg.test(value)) {
+                    return '请输入有效的邮箱地址';
+                }
+            },
+            password: function(value) {
+                if (value && value.length < 6) {
+                    return '密码长度不能少于6个字符';
+                }
+                if (value && value.length > 20) {
+                    return '密码长度不能超过20个字符';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

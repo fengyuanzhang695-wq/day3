@@ -1,0 +1,138 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}数据抓取 - 后台管理{% endblock %}
+
+{% block content_title %}数据抓取{% endblock %}
+
+{% block content %}
+<div class="layui-row layui-col-space15">
+    <!-- 表单区域 -->
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3 class="layui-card-title">抓取设置</h3>
+            </div>
+            <div class="layui-card-body">
+                <form class="layui-form" method="POST" action="{{ url_for('admin.scrape_news') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">搜索关键字</label>
+                        <div class="layui-input-block">
+                            {{ form.keyword(class="layui-input", placeholder="请输入要搜索的关键字") }}
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">排序方式</label>
+                        <div class="layui-input-block">
+                            {{ form.rtt(class="layui-input") }}
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">图片筛选</label>
+                        <div class="layui-input-block">
+                            {{ form.bsst(class="layui-input") }}
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">每页数量</label>
+                        <div class="layui-input-block">
+                            {{ form.rn(class="layui-input") }}
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            {{ form.submit(class="layui-btn layui-btn-blue", value="开始抓取") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 结果显示区域 -->
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3 class="layui-card-title">抓取结果</h3>
+                <div class="layui-card-header-right">
+                    <span class="layui-badge layui-bg-blue">共 {{ news_list|length }} 条记录</span>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                {% if news_list %}
+                <table class="layui-table" lay-even lay-skin="line">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>标题</th>
+                            <th>概要</th>
+                            <th>封面</th>
+                            <th>来源</th>
+                            <th>原始URL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for news in news_list %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td><a href="{{ news['原始URL'] }}" target="_blank">{{ news['标题'] }}</a></td>
+                            <td>{{ news['概要'] }}</td>
+                            <td>
+                                {% if news['封面'] %}
+                                <img src="{{ news['封面'] }}" alt="封面" style="width: 80px; height: 60px; object-fit: cover;">
+                                {% else %}
+                                <span class="layui-badge layui-bg-gray">无</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ news['来源'] }}</td>
+                            <td><a href="{{ news['原始URL'] }}" target="_blank" class="layui-btn layui-btn-xs layui-btn-primary">查看</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="layui-empty">
+                    <i class="layui-icon layui-icon-app"></i>
+                    <p>暂无数据，点击上方按钮开始抓取</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    layui.use(['element', 'layer', 'form'], function() {
+        var element = layui.element;
+        var layer = layui.layer;
+        var form = layui.form;
+        
+        // 初始化表单
+        form.render();
+        
+        // 提示信息
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    var icon = 0;
+                    if ("{{ category }}" === "success") icon = 1;
+                    if ("{{ category }}" === "warning") icon = 0;
+                    if ("{{ category }}" === "error") icon = 2;
+                    
+                    layer.msg("{{ message }}", {
+                        icon: icon,
+                        time: 2000
+                    });
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    });
+</script>
+{% endblock %}

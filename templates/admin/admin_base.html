@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}后台管理 - 政企智能舆情分析报告生成智能体应用系统{% endblock %}</title>
+    
+    <!-- 引入LayUI样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='layui/css/layui.css') }}">
+    
+    <style>
+        /* 基础样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        /* 顶部导航栏 */
+        .admin-header {
+            height: 60px;
+            background-color: #1e9fff;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .admin-header .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .admin-header .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-header .user-info .username {
+            margin-right: 15px;
+        }
+        
+        .admin-header .user-info .logout-btn {
+            padding: 5px 15px;
+            background-color: #fff;
+            color: #1e9fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .admin-header .user-info .logout-btn:hover {
+            background-color: #f5f7fa;
+        }
+        
+        /* 主体内容区 */
+        .admin-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        /* 左侧菜单 */
+        .admin-sidebar {
+            width: 200px;
+            background-color: #393D49;
+            color: #fff;
+            overflow-y: auto;
+        }
+        
+        .admin-sidebar .layui-nav {
+            background-color: #393D49;
+            color: #fff;
+        }
+        
+        .admin-sidebar .layui-nav-item a {
+            color: #fff;
+        }
+        
+        .admin-sidebar .layui-nav-item a:hover {
+            background-color: #2F4056;
+        }
+        
+        .admin-sidebar .layui-nav-itemed > a {
+            background-color: #2F4056;
+        }
+        
+        .admin-sidebar .layui-nav-child {
+            background-color: #2F4056;
+        }
+        
+        .admin-sidebar .layui-nav-child a {
+            color: #fff;
+        }
+        
+        /* 右侧内容 */
+        .admin-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .admin-content .content-header {
+            margin-bottom: 20px;
+        }
+        
+        .admin-content .content-header h2 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .admin-content .content-body {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                width: 60px;
+            }
+            
+            .admin-sidebar .layui-nav-item a span {
+                display: none;
+            }
+            
+            .admin-sidebar .layui-nav-item a i {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="admin-header">
+        <div class="logo">后台管理</div>
+        <div class="user-info">
+            <span class="username">{{ current_user.username }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn">退出</a>
+        </div>
+    </header>
+    
+    <!-- 主体内容区 -->
+    <div class="admin-container">
+        <!-- 左侧菜单 -->
+        <aside class="admin-sidebar">
+            <ul class="layui-nav layui-nav-tree" lay-filter="nav">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-home"></i> <span>数据管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('index') }}">仪表盘</a></dd>
+                    </dl>
+                </li>
+                
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-user"></i> <span>用户管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="{{ url_for('admin.user_list') }}">用户列表</a></dd>
+                        <dd><a href="{{ url_for('admin.role_list') }}">角色管理</a></dd>
+                    </dl>
+                </li>
+                
+                <li class="layui-nav-item">
+                    <a href="{{ url_for('admin.scrape_news') }}"><i class="layui-icon layui-icon-spread-left"></i> <span>数据抓取</span></a>
+                </li>
+                
+                <li class="layui-nav-item">
+                    <a href="{{ url_for('admin.system_settings') }}"><i class="layui-icon layui-icon-set"></i> <span>系统设置</span></a>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- 右侧内容 -->
+        <main class="admin-content">
+            <div class="content-header">
+                <h2>{% block content_title %}欢迎使用后台管理系统{% endblock %}</h2>
+            </div>
+            
+            <div class="content-body">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <!-- 引入LayUI脚本 -->
+    <script src="{{ url_for('static', filename='layui/layui.js') }}"></script>
+    <script>
+        layui.use(['element', 'layer', 'form'], function() {
+            var element = layui.element;
+            var layer = layui.layer;
+            var form = layui.form;
+            
+            // 初始化页面
+            {% block custom_script %}{% endblock %}
+        });
+    </script>
+    
+    <!-- 页面自定义脚本 -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

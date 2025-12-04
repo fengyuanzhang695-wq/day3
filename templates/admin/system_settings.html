@@ -1,0 +1,112 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}系统设置 - 后台管理{% endblock %}
+
+{% block content_title %}系统设置{% endblock %}
+
+{% block content %}
+<form class="layui-form" action="" method="POST">
+    {{ form.hidden_tag() }}
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">系统名称</label>
+        <div class="layui-input-block">
+            {{ form.name(class="layui-input", placeholder="请输入系统名称") }}
+            {% if form.name.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.name.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">系统描述</label>
+        <div class="layui-input-block">
+            {{ form.description(class="layui-textarea", placeholder="请输入系统描述", rows=5) }}
+            {% if form.description.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.description.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">LOGO URL</label>
+        <div class="layui-input-block">
+            {{ form.logo_url(class="layui-input", placeholder="请输入LOGO URL") }}
+            {% if form.logo_url.errors %}
+            <div class="layui-form-mid layui-word-aux layui-text-danger">
+                {% for error in form.logo_url.errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            {{ form.submit(class="layui-btn layui-btn-normal") }}
+            <a href="{{ url_for('admin.dashboard') }}" class="layui-btn layui-btn-primary">取消</a>
+        </div>
+    </div>
+</form>
+
+<div class="layui-card" style="margin-top: 20px;">
+    <div class="layui-card-header">
+        <h3 class="layui-card-title">系统信息</h3>
+    </div>
+    <div class="layui-card-body">
+        <table class="layui-table">
+            <tbody>
+                <tr>
+                    <td>系统版本</td>
+                    <td>1.0.0</td>
+                </tr>
+                <tr>
+                    <td>开发框架</td>
+                    <td>Flask</td>
+                </tr>
+                <tr>
+                    <td>数据库</td>
+                    <td>SQLite</td>
+                </tr>
+                <tr>
+                    <td>当前时间</td>
+                    <td>{{ current_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    layui.use(['form', 'layer'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+        
+        // 初始化表单
+        form.render();
+        
+        // 表单验证
+        form.verify({
+            name: function(value) {
+                if (value.length < 2) {
+                    return '系统名称长度不能少于2个字符';
+                }
+                if (value.length > 100) {
+                    return '系统名称长度不能超过100个字符';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

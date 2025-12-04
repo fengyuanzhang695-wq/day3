@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 政企智能舆情分析报告生成智能体应用系统</title>
+    
+    <!-- 引入LayUI样式 -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='layui/css/layui.css') }}">
+    
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-container .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-container .logo h1 {
+            font-size: 24px;
+            color: #333;
+            margin: 10px 0;
+        }
+        
+        .login-container .login-form {
+            margin-top: 20px;
+        }
+        
+        .login-container .form-item {
+            margin-bottom: 20px;
+        }
+        
+        .login-container .form-item label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .login-container .form-item .layui-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+        }
+        
+        .login-container .form-item .layui-input:focus {
+            border-color: #1e9fff;
+            outline: none;
+        }
+        
+        .login-container .login-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #1e9fff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .login-container .login-btn:hover {
+            background-color: #40a9ff;
+        }
+        
+        .login-container .error-message {
+            padding: 10px;
+            background-color: #fef0f0;
+            color: #f56c6c;
+            border: 1px solid #fbc4c4;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 50px 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>政企智能舆情分析报告生成智能体应用系统</h1>
+        </div>
+        
+        <!-- 错误消息提示 -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error-message">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form class="login-form" method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}  <!-- CSRF令牌 -->
+            
+            <div class="form-item">
+                <label for="username">用户名</label>
+                {{ form.username(class="layui-input", placeholder="请输入用户名") }}
+                {% for error in form.username.errors %}
+                    <div class="error-message" style="margin-top: 5px; padding: 5px;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-item">
+                <label for="password">密码</label>
+                {{ form.password(class="layui-input", placeholder="请输入密码") }}
+                {% for error in form.password.errors %}
+                    <div class="error-message" style="margin-top: 5px; padding: 5px;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-item">
+                {{ form.submit(class="login-btn") }}
+            </div>
+        </form>
+    </div>
+    
+    <!-- 引入LayUI脚本 -->
+    <script src="{{ url_for('static', filename='layui/layui.js') }}"></script>
+</body>
+</html>

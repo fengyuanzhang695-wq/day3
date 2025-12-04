@@ -1,0 +1,449 @@
+<html lang='zh-CN'>
+<head>
+    <meta charset='UTF-8'/>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+    <title>政企智能舆情分析报告生成智能体应用系统 - 登录</title>
+    <!-- 引入layui CSS -->
+    <link rel='stylesheet' href='https://cdn.staticfile.org/layui/2.9.8/css/layui.css'/>
+    <!-- 引入Font Awesome -->
+    <link href='https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css' rel='stylesheet'/>
+    <!-- 引入echarts -->
+    <script src='https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js'></script>
+    <!-- 引入layui JS -->
+    <script src='https://cdn.staticfile.org/layui/2.9.8/layui.js'></script>
+    <!-- 引入用户数据管理 -->
+    <script src='common/users.js'></script>
+    <!-- 自定义样式 -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        
+        /* 左侧背景区域 */
+        .left-bg {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #003A8C 0%, #0052D9 100%);
+            overflow: hidden;
+        }
+        
+        /* 背景网格 */
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        
+        /* 装饰元素 */
+        .decorate-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .decorate-circle:nth-child(2) {
+            top: 25%;
+            left: 25%;
+            width: 256px;
+            height: 256px;
+        }
+        
+        .decorate-circle:nth-child(3) {
+            bottom: 33%;
+            right: 33%;
+            width: 320px;
+            height: 320px;
+            background: rgba(54, 207, 201, 0.2);
+            animation-delay: 2s;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* 左侧内容 */
+        .left-content {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 120px;
+            color: white;
+        }
+        
+        /* 登录区域 */
+        .right-login {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 60px;
+        }
+        
+        .login-form {
+            width: 100%;
+            max-width: 420px;
+        }
+        
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .right-login {
+                padding: 0 20px;
+            }
+        }
+        
+        /* 图表容器 */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        
+        /* 统计卡片 */
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        /* 登录按钮 */
+        .login-btn {
+            background: linear-gradient(135deg, #0052D9 0%, #003A8C 100%);
+            border: none;
+            color: white;
+            height: 48px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            box-shadow: 0 8px 30px rgba(0, 82, 217, 0.25);
+            transform: translateY(-2px);
+        }
+        
+        /* 表单输入框 */
+        .layui-form-item .layui-input {
+            height: 48px;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+            padding-left: 42px;
+        }
+        
+        .layui-form-item .layui-input:focus {
+            border-color: #0052D9;
+            box-shadow: 0 0 0 2px rgba(0, 82, 217, 0.1);
+        }
+        
+        /* 输入框图标 */
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 18px;
+        }
+        
+        /* 密码显示/隐藏按钮 */
+        .toggle-pwd {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .toggle-pwd:hover {
+            color: #666;
+        }
+        
+        /* 其他登录方式 */
+        .other-login {
+            margin-top: 30px;
+        }
+        
+        .other-login .divider {
+            position: relative;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .other-login .divider span {
+            background: white;
+            padding: 0 20px;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .other-login .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e6e6e6;
+            z-index: 1;
+        }
+        
+        .other-login .divider span {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .login-methods {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .login-method {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid #e6e6e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .login-method:hover {
+            border-color: #0052D9;
+            color: #0052D9;
+            background: #f0f7ff;
+        }
+    </style>
+</head>
+    </head>
+<body>
+    <!-- 登录表单区域 -->
+    <div class='right-login'>
+        <div class='login-form'>
+            <!-- Logo和标题 -->
+            <div class='flex items-center mb-32'>
+                <div class='w-40 h-40 rounded-lg bg-[#0052D9] flex items-center justify-center mr-12'>
+                    <i class='fas fa-shield-alt text-4xl text-white'></i>
+                </div>
+                <h1 style='font-size: 24px; font-weight: 700; color: #1D2129;'>
+                    政企智能舆情分析系统
+                </h1>
+            </div>
+            
+            <!-- 登录表单标题 -->
+            <div class='mb-32'>
+                <h2 style='font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; color: #1D2129; margin-bottom: 8px;'>
+                    欢迎登录
+                </h2>
+                <p style='font-size: 16px; color: #999;'>
+                    请输入您的账号和密码以访问系统
+                </p>
+            </div>
+            
+            <!-- 登录表单 -->
+            <form class='layui-form' lay-filter='login-form'>
+                <!-- 用户名输入框 -->
+                <div class='layui-form-item mb-24'>
+                    <label class='layui-form-label' style='width: auto; padding: 0; font-size: 14px; font-weight: 500; color: #333; margin-bottom: 8px; display: block;'>
+                        用户名
+                    </label>
+                    <div class='layui-input-block' style='margin-left: 0; position: relative;'>
+                        <i class='fas fa-user input-icon'></i>
+                        <input type='text' name='username' required lay-verify='required' placeholder='请输入用户名' autocomplete='off' class='layui-input'>
+                    </div>
+                </div>
+                
+                <!-- 密码输入框 -->
+                <div class='layui-form-item mb-24'>
+                    <div class='flex justify-between items-center mb-8'>
+                        <label class='layui-form-label' style='width: auto; padding: 0; font-size: 14px; font-weight: 500; color: #333;'>
+                            密码
+                        </label>
+                        <a href='javascript:void(0);' style='font-size: 14px; color: #0052D9; text-decoration: none;'>
+                            忘记密码?
+                        </a>
+                    </div>
+                    <div class='layui-input-block' style='margin-left: 0; position: relative;'>
+                        <i class='fas fa-lock input-icon'></i>
+                        <input type='password' name='password' required lay-verify='required' placeholder='请输入密码' autocomplete='off' class='layui-input' id='password'>
+                        <i class='fas fa-eye-slash toggle-pwd' id='toggle-password'></i>
+                    </div>
+                </div>
+                
+                <!-- 记住密码和登录按钮 -->
+                <div class='layui-form-item'>
+                    <div class='flex justify-between items-center mb-24'>
+                        <div class='layui-form-item layui-form-checkbox' lay-skin='primary'>
+                            <input type='checkbox' name='remember' lay-skin='primary' title='记住我'>
+                        </div>
+                    </div>
+                    <button class='login-btn w-full' lay-submit lay-filter='login-submit'>
+                        <span>登录系统</span>
+                        <i class='fas fa-arrow-right ml-4'></i>
+                    </button>
+                </div>
+            </form>
+            
+            <!-- 其他登录方式 -->
+            <div class='other-login'>
+                <div class='divider'>
+                    <span>其他登录方式</span>
+                </div>
+                <div class='login-methods'>
+                    <div class='login-method'>
+                        <i class='fas fa-id-card'></i>
+                    </div>
+                    <div class='login-method'>
+                        <i class='fas fa-qrcode'></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 系统网址链接 -->
+            <div style='margin-top: 32px; text-align: center; font-size: 14px;'>
+                <p>访问系统登录界面：<a href='http://localhost:8000/页面1.html' target='_blank' style='color: #0052D9; text-decoration: none;'>http://localhost:8000/页面1.html</a></p>
+            </div>
+            
+            <!-- 底部版权信息 -->
+            <div style='margin-top: 16px; text-align: center; color: #999; font-size: 14px;'>
+                <p>© 2023 政企智能舆情分析报告生成智能体应用系统 版权所有</p>
+                <p style='margin-top: 4px;'>政务信息化建设项目 - 数据安全等级保护三级</p>
+            </div>
+        </div>
+    </div>
+
+
+<!-- 登录表单交互模块 -->
+<script>
+// 引入layui模块
+layui.use(['form', 'layer'], function() {
+  var form = layui.form;
+  var layer = layui.layer;
+  
+  // 密码显示/隐藏切换
+  var togglePassword = document.getElementById('toggle-password');
+  var passwordInput = document.getElementById('password');
+  togglePassword.addEventListener('click', function () {
+    // 切换类型
+    var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+
+    // 切换图标
+    var icon = togglePassword.querySelector('i');
+    if (type === 'password') {
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+    } else {
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    }
+  });
+  
+  // 密码加密函数（模拟）
+  function encryptPassword(password) {
+    // 这里使用简单的加密方式，实际项目中应该使用更安全的加密算法
+    return btoa(password); // Base64加密（仅用于演示，实际项目中应使用更安全的加密方式）
+  }
+  
+  // 登录表单提交处理
+  form.on('submit(login-submit)', function(data) {
+    // 获取表单数据
+    var username = data.field.username;
+    var password = data.field.password;
+    var remember = data.field.remember ? true : false;
+    
+    // 密码加密
+    var encryptedPassword = encryptPassword(password);
+    
+    // 显示加载状态
+    var submitButton = document.querySelector('.login-btn');
+    var originalHtml = submitButton.innerHTML;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-4"></i>登录中...';
+    submitButton.disabled = true;
+    
+    // 模拟登录请求
+    setTimeout(function() {
+      // 使用用户管理器验证用户
+      var user = userManager.validateUser(username, encryptedPassword);
+      
+      if (user) {
+        // 如果需要记住密码，保存到本地存储
+        if (remember) {
+          localStorage.setItem('rememberedUser', username);
+        } else {
+          localStorage.removeItem('rememberedUser');
+        }
+        
+        // 保存用户信息到sessionStorage
+        sessionStorage.setItem('userInfo', JSON.stringify({
+          id: user.id,
+          username: user.username,
+          role: user.role,
+          name: user.name,
+          email: user.email
+        }));
+        
+        // 登录成功，跳转到后台管理页面
+        window.location.href = 'pages/dashboard.html';
+      } else {
+        // 登录失败
+        layer.msg('用户名或密码错误，请重试', {icon: 5, time: 2000});
+        submitButton.innerHTML = originalHtml;
+        submitButton.disabled = false;
+      }
+    }, 1500);
+    
+    return false; // 阻止表单默认提交
+  });
+  
+  // 从本地存储加载记住的用户名
+  var rememberedUser = localStorage.getItem('rememberedUser');
+  if (rememberedUser) {
+    var usernameInput = document.querySelector('input[name="username"]');
+    var rememberCheckbox = document.querySelector('input[name="remember"]');
+    
+    if (usernameInput) usernameInput.value = rememberedUser;
+    if (rememberCheckbox) {
+      rememberCheckbox.checked = true;
+      form.render('checkbox'); // 重新渲染复选框
+    }
+  }
+});
+</script>
+<!-- [/JSMOD] ef_登录表单交互模块 -- 处理密码显示/隐藏切换、表单提交验证、登录状态管理和记住用户名功能 -->
+    </body>
+    </html>
